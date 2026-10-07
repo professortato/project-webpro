@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>บันทึกการรับเงิน</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+
+<body>
+    <div class="staff-shell">
+        <header class="staff-top">
+            <h1>พนักงานแคชเชียร์</h1>
+            <nav><a href="/cashier">สถานะโต๊ะ</a></nav>
+        </header>
+        <main class="cashier-content">
+            <section class="panel payment-panel">
+                <div class="panel-head">
+                    <h2>บันทึกการรับเงิน - โต๊ะ <%= String(table).padStart(2,"0") %>
+                    </h2>
+                </div>
+                <div class="payment-row"><span>ยอดที่ต้องชำระ</span><b>
+                        <%= bill.total %> ฿
+                    </b></div>
+                <% if(query && query.error){ %>
+                    <div class="error">
+                        <%= query.error %>
+                    </div>
+                    <% } %>
+                        <form action="/payment/confirm" method="post" id="paymentForm"><input type="hidden" name="table"
+                                value="<%= table %>">
+                            <div class="payment-row"><label>รับเงินมา</label><input id="received" name="received"
+                                    type="number" min="0" step="1"
+                                    value="<%= query && query.received ? query.received : bill.total %>"> ฿</div>
+                            <div class="payment-row"><span>เงินทอน</span><strong id="change">
+                                    <%= Math.max(0,(Number(query&&query.received||bill.total)-bill.total)) %> ฿
+                                </strong></div>
+                            <div class="method-title">ช่องทางชำระเงิน</div>
+                            <div class="method-buttons"><button type="button" class="method active"
+                                    data-method="เงินสด">เงินสด</button><button type="button" class="method"
+                                    data-method="QR CODE">QR CODE</button></div><input type="hidden" name="method"
+                                id="method" value="เงินสด"><button class="blue-btn full-btn"
+                                type="submit">ยืนยันการชำระเงิน</button>
+                        </form>
+            </section>
+            <section class="panel success-placeholder">
+                <p>เมื่อยืนยันแล้ว ระบบจะบันทึกการรับเงินและเปลี่ยนสถานะโต๊ะเป็น “ว่าง”</p>
+            </section>
+        </main>
+    </div>
+    <script>
+        const total =<%= bill.total %>; const received = document.getElementById('received'); const change = document.getElementById('change');
+        received.addEventListener('input', () => change.textContent = Math.max(0, (Number(received.value) || 0) - total) + ' ฿');
+        document.querySelectorAll('.method').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.method').forEach(x => x.classList.remove('active')); b.classList.add('active'); document.getElementById('method').value = b.dataset.method; }));
+    </script>
+</body>
+
+</html>

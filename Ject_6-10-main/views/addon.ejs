@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ปรับแต่งรายการอาหาร</title>
+  <link rel="stylesheet" href="/public/style.css">
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">ปรับแต่งรายการอาหาร</div>
+      <div class="top-links"><a href="/?table=<%= table %>">กลับ</a><a
+          href="/cart?table=<%= table %>">ตะกร้าอาหาร</a><span class="table-pill">โต๊ะ <%= String(table).padStart(2,"0")
+            %></span></div>
+    </header>
+    <main class="content narrow">
+      <div class="product-head"><img src="<%= menu.image %>" alt="<%= menu.name %>">
+        <div>
+          <h1>
+            <%= menu.name %>
+          </h1>
+          <div class="price">
+            <%= menu.price %> บาท
+          </div>
+        </div>
+      </div>
+      <form action="/add-to-cart" method="post">
+        <input type="hidden" name="menu_id" value="<%= menu.menu_id %>"><input type="hidden" name="table"
+          value="<%= table %>">
+        <% groups.forEach((group,gi)=>{ %>
+          <section class="option-box">
+            <h2>
+              <%= group.type %> <small class="addon-rule">
+                  <%= group.multiple ? "เลือกได้หลายอย่าง" : "เลือกได้อย่างใดอย่างหนึ่ง" %>
+                </small>
+            </h2>
+            <div class="options">
+              <% group.options.forEach((option,oi)=>{ %>
+                <label class="option-row">
+                  <% if (option.multiple) { %>
+                    <input type="checkbox" name="addon_<%= gi %>" value="<%= option.addon_id %>">
+                    <% } else { %>
+                      <input type="radio" name="addon_single_<%= gi %>" value="<%= option.addon_id %>" <%=oi===0
+                        ? 'checked' :'' %>>
+                      <% } %>
+                        <span>
+                          <%= option.option_name %>
+                        </span><span class="option-price">
+                          <%= option.extra_price ? '+' +option.extra_price+' บาท':'ฟรี' %>
+                        </span>
+                </label>
+                <% }) %>
+            </div>
+          </section>
+          <% }) %>
+            <section class="option-box quantity-row"><label>จำนวน <input type="number" name="quantity" value="1" min="1"
+                  max="99"></label></section>
+            <div class="actions"><a class="secondary-btn" href="/?table=<%= table %>">กลับ</a><button
+                class="primary-btn" type="submit">เพิ่มลงตะกร้า</button></div>
+      </form>
+    </main>
+  </div>
+</body>
+
+</html>

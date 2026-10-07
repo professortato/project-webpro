@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ตะกร้าอาหาร</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand">ตะกร้าอาหาร</div>
+            <div class="top-links"><a href="/?table=<%= table %>">หน้าหลัก</a><a
+                    href="/orders?table=<%= table %>">ประวัติการสั่ง/รายการรอ</a><span class="table-pill">โต๊ะ <%=
+                        String(table).padStart(2,"0") %></span></div>
+        </header>
+        <main class="content narrow">
+            <div class="section-title">
+                <h1>ตะกร้าอาหาร</h1><span>
+                    <%= cart.length %> รายการ
+                </span>
+            </div>
+            <% if(!cart.length){ %>
+                <div class="empty">
+                    <p>ยังไม่มีรายการอาหาร</p><a class="primary-btn" href="/?table=<%= table %>">เลือกอาหาร</a>
+                </div>
+                <% } else { %>
+                    <div class="cart-list">
+                        <% cart.forEach(item=>{ %><article class="cart-card"><img src="<%= item.image %>" alt="">
+                                <div class="cart-main">
+                                    <h2>
+                                        <%= item.name %> × <%= item.quantity %>
+                                    </h2>
+                                    <div>ราคาอาหาร: <%= item.base_price %> บาท</div>
+                                    <% if(item.addons.length){ %>
+                                        <div class="addons"><b>Add-on:</b>
+                                            <% item.addons.forEach(a=>{ %><span>
+                                                    <%= a.name %>
+                                                        <%= a.price ? ' (+' +a.price+' บาท)':'' %>
+                                                </span>
+                                                <% }) %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                                <div class="cart-price"><b>
+                                        <%= item.total_price %> บาท
+                                    </b>
+                                    <form action="/remove-from-cart" method="post"><input type="hidden" name="cart_id"
+                                            value="<%= item.cart_id %>"><input type="hidden" name="table"
+                                            value="<%= table %>"><button class="danger-btn">ลบ</button></form>
+                                </div>
+                            </article>
+                            <% }) %>
+                    </div>
+                    <div class="total-box"><span>ยอดรวม</span><strong>
+                            <%= total %> บาท
+                        </strong>
+                        <div class="actions">
+                            <form action="/clear-cart" method="post"><input type="hidden" name="table"
+                                    value="<%= table %>"><button class="secondary-btn">ล้างตะกร้า</button></form>
+                            <form action="/confirm-order" method="post"><input type="hidden" name="table"
+                                    value="<%= table %>"><button class="primary-btn">ยืนยันการสั่งอาหาร</button></form>
+                        </div>
+                    </div>
+                    <% } %>
+        </main>
+    </div>
+</body>
+
+</html>

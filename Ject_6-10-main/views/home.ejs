@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>หน้าจอดูเมนู</title>
+  <link rel="stylesheet" href="/public/style.css">
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">หน้าจอดูเมนู</div>
+      <div class="top-links"><a href="/?table=<%= table %>">หน้าหลัก</a><a
+          href="/orders?table=<%= table %>">ประวัติการสั่ง/รายการรอ</a><a
+          href="/cart?table=<%= table %>">ตะกร้าอาหาร</a><span class="table-pill">โต๊ะ <%= String(table).padStart(2,"0")
+            %></span></div>
+    </header>
+    <main class="content">
+      <div class="hero-row">
+        <div>
+          <h1>เมนูอาหาร</h1>
+          <p>เลือกอาหารสำหรับโต๊ะ <strong>
+              <%= String(table).padStart(2,"0") %>
+            </strong></p>
+        </div><a class="outline-btn" href="/cart?table=<%= table %>">ตะกร้าอาหาร</a>
+      </div>
+      <% categories.forEach(category=>{ const categoryMenus=menus.filter(m=>m.category===category);
+        if(!categoryMenus.length) return; %>
+        <section class="category">
+          <h2>
+            <%= category %>
+          </h2>
+          <div class="menu-grid">
+            <% categoryMenus.forEach(menu=>{ %>
+              <article class="menu-card">
+                <img src="<%= menu.image %>" alt="<%= menu.name %>">
+                <div class="menu-info">
+                  <div><b>
+                      <%= menu.name %>
+                    </b><span>
+                      <%= menu.price %> บาท
+                    </span></div><a class="add-button"
+                    href="/addon?menu_id=<%= menu.menu_id %>&table=<%= table %>">+</a>
+                </div>
+              </article>
+              <% }) %>
+          </div>
+        </section>
+        <% }) %>
+    </main>
+  </div>
+</body>
+
+</html>

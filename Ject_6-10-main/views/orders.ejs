@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ประวัติการสั่ง</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand">ประวัติการสั่ง/รายการรอ</div>
+            <div class="top-links"><a href="/?table=<%= table %>">หน้าหลัก</a><a
+                    href="/cart?table=<%= table %>">ตะกร้าอาหาร</a><span class="table-pill">โต๊ะ <%=
+                        String(table).padStart(2,"0") %></span></div>
+        </header>
+        <main class="content narrow">
+            <div class="section-title">
+                <h1>ประวัติการสั่ง/รายการรอ</h1>
+            </div>
+            <% if(!orders.length){ %>
+                <div class="empty">ยังไม่มีรายการสั่งอาหาร</div>
+                <% } %>
+                    <% orders.forEach(order=>{ %><article class="order-history">
+                            <div class="order-head"><b>ออเดอร์ #<%= order.order_id %></b><span>โต๊ะ <%=
+                                        String(order.table_no).padStart(2,"0") %></span><span
+                                    class="status status-<%= order.status==='กำลังทำ'?'cooking':order.status==='พร้อมเสิร์ฟ'?'ready':order.status==='เสิร์ฟแล้ว'?'served':'paid' %>">
+                                    <%= order.status %>
+                                </span></div>
+                            <% order.items.forEach(item=>{ let ads=[]; try{ads=JSON.parse(item.addons||"[]")}catch(e){}
+                                %><div class="order-line"><span>
+                                        <%= item.name %> × <%= item.quantity %>
+                                                <% if(ads.length){ %><small>
+                                                        <%= ads.map(a=>a.name).join(", ") %>
+                                                    </small>
+                                                    <% } %>
+                                    </span><b>
+                                        <%= item.total_price %> บาท
+                                    </b></div>
+                                <% }) %>
+                                    <div class="order-total">รวม <%= order.total %> บาท</div>
+                        </article>
+                        <% }) %>
+        </main>
+    </div>
+</body>
+
+</html>
